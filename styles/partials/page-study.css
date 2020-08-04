@@ -209,6 +209,7 @@
         max-width: 1100px;
     }
     .page-header .header-content {
+        position: relative;
         margin: 0 auto;
         max-width: 740px;
         flex: 1 1;
@@ -229,7 +230,7 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 16px;
-        /* position: absolute;  */
+        position: absolute;  
         bottom: -28px;
     }
     #page-study main {

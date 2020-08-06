@@ -9,7 +9,7 @@ function cloneField(){
 
     // Pegar cada field usando um for
     fields.forEach(function (field){
-        field.value = ""
+        field.value = "" // Adicionando valor vazio para cada field
     })
 
     document.querySelector('#schedule-items').appendChild(newFieldContainer) // Escolhendo o local para ser exibido o html novo

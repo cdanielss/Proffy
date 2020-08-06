@@ -23,6 +23,34 @@ const proffys = [
     }
 ]
 
+const subjects = [
+    "Artes",
+    "Biologia",
+    "Ciências",
+    "Educação física",
+    "Física",
+    "Geografia",
+    "História",
+    "Matemática",
+    "Português",
+    "Química",
+]
+
+const weekdays = [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado",
+]
+
+function getSubject(subjectNumber) { // Pega o número passado no formulario e transforma em palavra
+    const arrayPosition = +subjectNumber - 1 
+    return subjects[arrayPosition] 
+}
+
 // Configurando o servidor
 const express = require('express')
 const server = express()
@@ -38,13 +66,23 @@ server.use(express.static("public")) // Configuração do Servidor para pegar os
 
 .get("/", (req, res) => {   // Criando as rotas da aplicação
     return res.render("index.html") // 'render' é uma função do nunjucks
-    // return res.sendFile(__dirname + "/views/index.html") esse é o padrão do js
+    // return res.sendFile(__dirname + "/views/index.html") = esse é o padrão do js
 })
 .get("/study", (req, res) => {
-    return res.render("study.html", {proffys}) // Passando o objeto para a página que ele será usado
+    const filters = req.query // Salvando o contéudo do formulario da pagina 
+    return res.render("study.html", {proffys, filters, subjects, weekdays}) // Passando o objeto para a página que ele será usado e o 'filters' que são as opcoes de filtro
 })
 .get("/give-classes", (req, res) => {
-    return res.render("give-classes.html")
+    const data = req.query // Pegando os dados do formulario
+    const isNotEmpty = Object.keys(data).length > 0 // Verifica se data é vazio
+
+    if (isNotEmpty) { // Condição pra salvar somente se tiver dados
+        data.subject = getSubject(data.subject) // Mandando o número para função para retorna como palvra
+        proffys.push(data) // Adicionando os dados do formulario e salvar nos proffys
+        return res.redirect("/study") // Forma de redirecionar depois de ter salvo o formulario
+    }
+    
+    return res.render("give-classes.html", {subjects,weekdays})
 })
 
 .listen(5500) // Escolhendo porta para o servidor 

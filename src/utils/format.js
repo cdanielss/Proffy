@@ -22,8 +22,11 @@ const weekdays = [
 ]
 
 function convertHoursToMinutes(time) {
-    // const [hour, minutes] = time.split(":")  split divide string de acordo com o argumento passado, no caso esse argumento sao dois pontos
-    // co
+    const [hour, minutes] = time.split(":") // split divide string de acordo com o argumento passado, no caso esse argumento sao dois pontos
+    // ou seja const hour = time.split(":")[0]
+    // ou seja const hour = time.split(":")[1]
+    return Number((hour * 60) + minutes)
+
 }
 
 function getSubject(subjectNumber) { // Pega o número passado no formulario e transforma em palavra
@@ -34,5 +37,6 @@ function getSubject(subjectNumber) { // Pega o número passado no formulario e t
 module.exports = {
     subjects,
     weekdays,
-    getSubject
+    getSubject,
+    convertHoursToMinutes
 }

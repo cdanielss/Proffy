@@ -51,9 +51,10 @@ function getSubject(subjectNumber) { // Pega o número passado no formulario e t
     return subjects[arrayPosition] 
 }
 
-// Configurando o servidor
+// Configurando o servidor npm install express
 const express = require('express')
 const server = express()
+// Configurando Template engine npm install nunjucks
 const nunjucks = require('nunjucks')
 
 // Configurando nunjucks, para o html {Template engine}

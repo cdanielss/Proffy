@@ -1,55 +1,8 @@
-const proffys = [
-    {
-        name: "Carlos Daniel",
-        avatar: "https://avatars2.githubusercontent.com/u/2254731?s=460&amp;u=0ba16a79456c2f250e7579cb388fa18c5c2d7d65&amp;v=4",
-        whatsapp: "323242", 
-        bio: "Estudante",
-        subject: "Química",
-        cost: 20,
-        weekday: [0], 
-        time_from: [720], 
-        time_to: [120] 
-    },
-    {
-        name: "Daniel",
-        avatar: "https://avatars2.githubusercontent.com/u/2254731?s=460&amp;u=0ba16a79456c2f250e7579cb388fa18c5c2d7d65&amp;v=4",
-        whatsapp: "323242", 
-        bio: "Estudante",
-        subject: "Química",
-        cost: 20,
-        weekday: [0], 
-        time_from: [720], 
-        time_to: [120] 
-    }
-]
+// Configurando banco de dados 
+const Database = require('./database/db')
 
-const subjects = [
-    "Artes",
-    "Biologia",
-    "Ciências",
-    "Educação física",
-    "Física",
-    "Geografia",
-    "História",
-    "Matemática",
-    "Português",
-    "Química",
-]
 
-const weekdays = [
-    "Domingo",
-    "Segunda-feira",
-    "Terça-feira",
-    "Quarta-feira",
-    "Quinta-feira",
-    "Sexta-feira",
-    "Sábado",
-]
-
-function getSubject(subjectNumber) { // Pega o número passado no formulario e transforma em palavra
-    const arrayPosition = +subjectNumber - 1 
-    return subjects[arrayPosition] 
-}
+const { subjects, weekdays, getSubject }= require('./utils/format') // Dados para a logica da pagina
 
 // Configurando o servidor npm install express
 const express = require('express')
@@ -69,10 +22,30 @@ server.use(express.static("public")) // Configuração do Servidor para pegar os
     return res.render("index.html") // 'render' é uma função do nunjucks
     // return res.sendFile(__dirname + "/views/index.html") = esse é o padrão do js
 })
+
 .get("/study", (req, res) => {
     const filters = req.query // Salvando o contéudo do formulario da pagina 
-    return res.render("study.html", {proffys, filters, subjects, weekdays}) // Passando o objeto para a página que ele será usado e o 'filters' que são as opcoes de filtro
+
+    if (!filters || !filters.weekday || !filters.time) {  // Se não tiver nada retorna a mesma pagina
+        return res.render("study.html", { filters, subjects, weekdays }) // Passando o objeto para a página que ele será usado e o 'filters' que são as opcoes de filtro
+    }
+
+    const query = `
+        SELECT classes.*, proffys.*
+        FROM proffys 
+        JOIN classes ON (classes.proffy_id = proffys.id)
+        WHERE EXISTS (
+            SELECT class_schedule.*
+            FROM class_schedule 
+            WHERE class_schedule.class_id = classes.id
+            AND class_schedule.weekday = ${filters.weekday}
+            AND class_schedule.time_from <= ${filters.time_from}
+            AND class_schedule.time_to > ${filters.time_to}
+        )
+    `
+    
 })
+
 .get("/give-classes", (req, res) => {
     const data = req.query // Pegando os dados do formulario
     const isNotEmpty = Object.keys(data).length > 0 // Verifica se data é vazio

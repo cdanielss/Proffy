@@ -1,11 +1,11 @@
 // Configurando banco de dados npm install sqlite-async
 // Rodando o codigo node src/database/db.js
-const Database = require("sqlite-async")
-Database.open(__dirname + '/database.sqlite').then(execute) // Abrindo o banco 
+const Database = require('sqlite-async')
+
 
 function execute(db) { // db vem por padrão na funcao 
     // Criando as tabelas dos bancos
-    db.exec(`
+    return db.exec(`
         CREATE TABLE IF NOT EXISTS proffys (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
@@ -16,7 +16,7 @@ function execute(db) { // db vem por padrão na funcao
 
         CREATE TABLE IF NOT EXISTS classes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            subject TEXT,
+            subject INTEGER,
             cost TEXT,
             proffy_id INTEGER
         );
@@ -30,3 +30,6 @@ function execute(db) { // db vem por padrão na funcao
         );
     `)
 }
+
+// module.exports está exportando o banco 
+module.exports = Database.open(__dirname + '/database.sqlite').then(execute) // Abrindo o banco 

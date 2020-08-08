@@ -1,5 +1,5 @@
 // Importando a funçao de render do pageStudy
-const respageStudy = require('./pages')
+const { respageStudy, resSaveClass } = require('./pages')
 
 const { subjects, weekdays, getSubject, convertHoursToMinutes }= require('./utils/format') // Dados para a logica da pagina
 
@@ -24,18 +24,13 @@ server.use(express.static("public")) // Configuração do Servidor para pegar os
 
 .get("/study", respageStudy)
 
+// Recebendo os dados do req.body, para nao aparecer na aba
+.use(express.urlencoded({ extended: true }))
 .get("/give-classes", (req, res) => {
-    const data = req.query // Pegando os dados do formulario
-    const isNotEmpty = Object.keys(data).length > 0 // Verifica se data é vazio
-
-    if (isNotEmpty) { // Condição pra salvar somente se tiver dados
-        data.subject = getSubject(data.subject) // Mandando o número para função para retorna como palvra
-        proffys.push(data) // Adicionando os dados do formulario e salvar nos proffys
-        return res.redirect("/study") // Forma de redirecionar depois de ter salvo o formulario
-    }
-    
     return res.render("give-classes.html", {subjects,weekdays})
 })
+// Criando rota para receber os dados pelo metodo post
+.post("/save-class", resSaveClass)
 
 .listen(5500) // Escolhendo porta para o servidor 
 

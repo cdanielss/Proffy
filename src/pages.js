@@ -33,10 +33,51 @@ async function respageStudy(req, res) {
     try {
         const db = await Database
         const proffys = await db.all(query)
-        return res.render("study.html", {proffys, subjects, filters, weekdays})
+        return res.render("study.html", {proffys, subjects, filters, weekdays}) // exibe a pagina
     } catch (error) {
         console.log(error)
     }
 }
 
-module.exports = respageStudy
+async function resSaveClass(req, res) {
+    // const data = req.body  Pegando os dados do formulario
+    const createProffy = require('./database/createProffy')
+    // Pegando os valores do formulario
+    const proffyValue = {
+        name: req.body.name, // Pegando os dados do formulario do html
+        avatar: req.body.avatar,
+        whatsapp: req.body.whatsapp,
+        bio: req.body.bio
+    }
+    const classValue = {
+        subject: req.body.subject,
+        cost: req.body.cost
+    }
+    const classScheduleValues = req.body.weekday.map((weekday, index) => {
+        return {
+            weekday, // nao precisa do req.body pois a funcao ja esta pegando no map()
+            time_from: convertHoursToMinutes(req.body.time_from[index]),
+            time_to: convertHoursToMinutes(req.body.time_to[index]),
+        }
+    })
+
+    try { // salvando no banco 
+        const db = await Database
+        await createProffy(db, { proffyValue, classValue, classScheduleValues })
+        
+        let queryString = "?subject=" + req.body.subject // fazendo uma url com os valor cadastrado
+        queryString += "&weekday=" + req.body.weekday[0]
+        queryString += "&time=" + req.body.time_from[0]
+
+        return res.redirect("/study" + queryString) // Forma de redirecionar depois de ter salvo o formulario com os valores cadastrados
+    } catch (error) {
+        console.log(error)
+    }
+
+    
+}
+
+module.exports = { 
+    respageStudy,
+    resSaveClass
+}

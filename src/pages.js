@@ -33,6 +33,9 @@ async function respageStudy(req, res) {
     try {
         const db = await Database
         const proffys = await db.all(query)
+        proffys.map((proffy) => {
+            proffy.subject = getSubject(proffy.subject)
+        })
         return res.render("study.html", {proffys, subjects, filters, weekdays}) // exibe a pagina
     } catch (error) {
         console.log(error)

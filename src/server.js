@@ -32,5 +32,5 @@ server.use(express.static("public")) // Configuração do Servidor para pegar os
 // Criando rota para receber os dados pelo metodo post
 .post("/save-class", resSaveClass)
 
-.listen(5500) // Escolhendo porta para o servidor 
+.listen(3000) // Escolhendo porta para o servidor 
 
